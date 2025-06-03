@@ -8,18 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 const usuarios = [];
-const tweets = [
-    {
-        username: "bobesponja",
-        avatar: "https://cdn.shopify.com/s/files/1/0150/0643/3380/files/Screen_Shot_2019-07-01_at_11.35.42_AM_370x230@2x.png",
-        tweet: "Eu amo hambúrguer de siri!"
-    },
-    {
-        username: "Zeus",
-        avatar: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjh4xk8tcTtPAH5BK-MJUk43us44NQjGfYKqJe4FKh2MO4tDIzxkBI41goMtbZFC6rfwShFxBBO97VhLWXzauoUBxcrWNpmMkPDuSfST8hskGIGHcUhjSfc1d2YkSZqZ4hkcndHUr0qgNY/w452-h640/muller-pereira-zeus3lowq-bymuller.jpg",
-        tweet: "SOU O DEUS SUPREMO"
-    }
-];
+const tweets = [];
 
 app.post("/sign-up", (req, res) => {
     const { username, avatar } = req.body;
@@ -28,8 +17,11 @@ app.post("/sign-up", (req, res) => {
         username,
         avatar
     }
+    if(!username || !avatar){
+        return res.status(400).send("Todos os campos são obrigatórios!"); 
+    }
     usuarios.push(novoUsuario);
-    res.send("deu certo");
+    res.send("Ok");
 });
 
 app.get("/tweets", (req, res) => {
@@ -43,7 +35,7 @@ app.get("/tweets", (req, res) => {
             tweet: tweet.tweet
         };
     });
-    res.send(tweetComAvatar.slice(-10));
+    res.send(tweetComAvatar.slice(-10).reverse());
 });
 
 app.post("/tweets", (req, res) => {
@@ -53,8 +45,18 @@ app.post("/tweets", (req, res) => {
         username,
         tweet
     }
+    const usuarioCadastrado = usuarios.find(u => u.username === username);
+
+     if(!usuarioCadastrado){
+       return res.status(401).send("Usuário não Cadastrado!");  
+    }
+
+    if(!username || !tweet){
+        return res.send("Todos os campos são obrigatórios!"); 
+    }
+
     tweets.push(novoTweet);
-    res.send("certinho");
+    res.send("Ok");
 
 });
 
